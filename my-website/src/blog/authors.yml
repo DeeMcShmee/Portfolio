@@ -1,0 +1,14 @@
+
+dgendron:
+  name: Danny Gendron
+  title: Administrative and network technician
+  url: https://zn2d.com
+  image_url: https://github.com/deemcshmee.png
+  page:
+    # customize the url of the author page at /blog/authors/<permalink>
+    permalink: '/all-danny-gendron-articles'
+  socials:
+    x: 
+    linkedin: 
+    github: 
+    
