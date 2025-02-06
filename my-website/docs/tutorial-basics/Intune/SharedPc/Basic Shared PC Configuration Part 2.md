@@ -14,10 +14,19 @@ sidebar_position: 2
 
 # Plan :
 
-## Installation of UWF on 3 machines
+## Installation of UWF on 4 machines
 
     - UFW is not automatically installed on Windows. It needs to be activated. Here's where in Windows 10 and 11 :
         ![UWFInWin](UWFinWin.png)
 
     - Make sure that before installing this feature, the OS is a much of out of the box as possible. Since this a trial, we do not want anything that can influence the tests.
-        - The 3 machines have been resetted with OOBE
+        - The 4 machines have been resetted with OOBE and made sure that it is properly sync with Intune ( I wasted a few minutes on that...)
+    
+    - Now that the machines are running with UWF installed, It's time to start the tests in regards to the maintenance(servicing)
+
+    ** MAJOR NOTE : Make sure that you have one of these Windows editions if you don't want to waste precious time **
+    ![Requirements](requirements.png)
+
+## Servicing
+
+    - UFW 

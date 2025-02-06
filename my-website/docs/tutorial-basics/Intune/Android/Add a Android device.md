@@ -26,7 +26,7 @@ We need to create a profile under Device | Enrollment and choose *Corporate-owne
 
 ### On a factory-reset device
 
-    - NOw on the device that has been factory-reseted :
+    - Now on the device that has been factory-reseted :
         - Choose your language
         - Connect to a wireless network
         - Accept the Google terms
