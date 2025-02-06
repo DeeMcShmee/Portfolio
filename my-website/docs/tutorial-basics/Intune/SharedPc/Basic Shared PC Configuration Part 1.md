@@ -39,7 +39,7 @@ Hypothese : To find a new solution with the tools that are given, the approach w
             - Fouth group will have UWF installed and configured locally and not have the SharedPC policy applied.
             ![Groupsexample](Groups.png)
 
-## Device configuration in Intune
+## Device configuration in Intune CSP
         - It seems to be able to managed UWF with Intune, you need to create a custom CSP with Multiple OMA-URI settings
         
             ![CSPUWFCONFIG](CSPUWFCONG.png)
@@ -47,3 +47,107 @@ Hypothese : To find a new solution with the tools that are given, the approach w
         - Right from the start, there's an error in the configuration :
 
             ![UWFError](UWFerror.png)
+
+        - Doesn't seem to work or it's a management/supervision type of service via Intune
+
+        - Ok, I'll take a new approach. Let's make a PS Script :
+
+            ```jsx title="UWFsetupIntune.ps1"
+                # Enable Unified Write Filter (UWF)
+                uwfmgr filter enable
+
+                # Protect the C: Drive
+                uwfmgr volume protect C:
+
+                # Set Overlay Size (2GB)
+                uwfmgr overlay set-size 2048
+
+                # Enable UWF Servicing Mode
+                uwfmgr servicing enable
+
+                # Set Daily Servicing Start Time (8:00 PM UTC = 3:00 PM ET)
+                $servicingStartTime = "20:00:00"
+                $servicingDuration = 300 # 5 hours in minutes
+
+                # Apply Servicing Schedule
+                reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\UWF\Servicing" /v StartTime /t REG_SZ /d $servicingStartTime /f
+                reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\UWF\Servicing" /v Duration /t REG_DWORD /d $servicingDuration /f
+
+                # File Exclusions (Ensure logs and Intune-related files are not wiped on reboot)
+                uwfmgr file add-exclusion C:\Windows\Logs
+                uwfmgr file add-exclusion C:\ProgramData\Microsoft\Intune
+
+                # Apply changes and restart to enable UWF
+                Restart-Computer -Force
+
+            ```
+        
+        - Well this approach might work but it seems that we need to enable the feature prior to excuting the script. Here's a new version :
+
+            ```jsx title="UWFsetupIntune2.ps1"
+                # Logging Function
+                $logFile = "C:\Windows\Temp\UWF_Setup.log"
+                function Write-Log {
+                    param ([string]$message)
+                    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                    Add-Content -Path $logFile -Value "$timestamp - $message"
+                }
+
+                Write-Log "Starting Unified Write Filter (UWF) Setup..."
+
+                # Enable Unified Write Filter Feature (if not already installed)
+                $uwfFeature = Get-WindowsOptionalFeature -Online -FeatureName "Client-UnifiedWriteFilter"
+                if ($uwfFeature.State -ne "Enabled") {
+                    Write-Log "Enabling UWF Feature..."
+                    try {
+                        Enable-WindowsOptionalFeature -Online -FeatureName "Client-UnifiedWriteFilter" -All -NoRestart -ErrorAction Continue
+                        Write-Log "UWF Feature enabled successfully."
+                    } catch {
+                        Write-Log "Failed to enable UWF Feature: $_"
+                        exit 1
+                    }
+                } else {
+                    Write-Log "UWF Feature is already enabled."
+                }
+
+                # Enable Unified Write Filter (UWF)
+                Write-Log "Enabling UWF..."
+                uwfmgr filter enable
+
+                # Protect the C: Drive
+                Write-Log "Protecting C: drive..."
+                uwfmgr volume protect C:
+
+                # Set Overlay Size (2GB)
+                Write-Log "Setting overlay size to 2GB..."
+                uwfmgr overlay set-size 2048
+
+                # Enable UWF Servicing Mode
+                Write-Log "Enabling servicing mode..."
+                uwfmgr servicing enable
+
+                # Set Daily Servicing Start Time (3:00 PM ET = 8:00 PM UTC)
+                $servicingStartTime = "20:00:00"
+                $servicingDuration = 300 # 5 hours in minutes
+
+                Write-Log "Applying servicing schedule..."
+                reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\UWF\Servicing" /v StartTime /t REG_SZ /d $servicingStartTime /f
+                reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\UWF\Servicing" /v Duration /t REG_DWORD /d $servicingDuration /f
+
+                # File Exclusions (Ensure logs and Intune-related files are not wiped on reboot)
+                Write-Log "Adding file exclusions..."
+                uwfmgr file add-exclusion C:\Windows\Logs
+                uwfmgr file add-exclusion C:\ProgramData\Microsoft\Intune
+                uwfmgr file add-exclusion C:\Windows\Temp
+
+                # Registry Exclusions (Optional: Ensure specific registry settings persist)
+                #Write-Log "Adding registry exclusions..."
+                #uwfmgr registry add-exclusion HKEY_LOCAL_MACHINE\SOFTWARE\CompanyApp
+
+                # Apply changes and restart to enable UWF
+                Write-Log "Restarting system to apply UWF settings..."
+                Restart-Computer -Force
+
+            ```
+        
+

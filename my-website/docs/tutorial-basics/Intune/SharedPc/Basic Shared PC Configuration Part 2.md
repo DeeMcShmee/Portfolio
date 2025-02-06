@@ -14,7 +14,7 @@ sidebar_position: 2
 
 # Plan :
 
-## Installation of UWF on 3 machines
+## Installation of UWF on 4 machines
 
     - UFW is not automatically installed on Windows. It needs to be activated. Here's where in Windows 10 and 11 :
         ![UWFInWin](UWFinWin.png)
