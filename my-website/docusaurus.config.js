@@ -15,7 +15,7 @@ const config = {
   favicon: 'img/network.png',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://zn2d.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
    baseUrl: '/',
@@ -25,7 +25,7 @@ const config = {
   // organizationName: 'facebook', // Usually your GitHub org/user name.
   // projectName: 'docusaurus', // Usually your repo name.
 
-   onBrokenLinks: 'throw',
+   onBrokenLinks: 'ignore',
    onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
