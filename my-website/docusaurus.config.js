@@ -125,21 +125,21 @@ const config = {
               },
             ],
           },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/',
-              },
-            ],
-          },
+          // {
+          //  title: 'More',
+          //  items: [
+          //    {
+          //      label: 'Blog',
+          //      to: '/blog',
+          //    },
+          //    {
+          //      label: 'GitHub',
+          //      href: 'https://github.com/',
+          //    },
+          //  ],
+          // },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Projects, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} My ZN2D Projects, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
